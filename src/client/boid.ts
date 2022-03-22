@@ -18,31 +18,28 @@ export class Boid extends THREE.Mesh {
         this.position.set(
             (Math.random() - 0.5) * this.width,
             (Math.random() - 0.5) * this.height,
-            0)
-        this.velocity.set(
-            (Math.random() - 0.5) * 0.1,
-            (Math.random() - 0.5) * 0.1,
-            0)
+            0
+        )
+        this.velocity.set((Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1, 0)
         this.acceleration.copy(this.acceleration)
     }
 
     update(otherBoids: Boid[]) {
         otherBoids = this.getNeighbors(otherBoids, 20)
         this.separate(otherBoids, 0.001)
-        this.align   (otherBoids, 0.003)
-        this.cohese  (otherBoids, 0.002)
+        this.align(otherBoids, 0.003)
+        this.cohese(otherBoids, 0.002)
         this.move()
-        this.constrain(80,50)
+        this.constrain(80, 50)
     }
 
     /**
-     * 
+     *
      * @param neighbors An array of other boids that do not include this boid
      * @param strength How strong is the boid's separation force
      * @returns void
      */
-    separate(neighbors: Boid[], strength:number = 0.003): void {
-
+    separate(neighbors: Boid[], strength: number = 0.003): void {
         // if there are no boids nearby, return
         if (neighbors.length === 0) {
             return
@@ -60,23 +57,23 @@ export class Boid extends THREE.Mesh {
         steering.sub(this.velocity)
         steering.multiplyScalar(strength)
         steering.clampLength(0, this.maxForce)
-        
+
         this.acceleration.add(steering)
     }
-    
+
     /**
      * Steers towards the average heading of the local flock
      *
-     * @param neighbors An array of other neighboring boids 
+     * @param neighbors An array of other neighboring boids
      * @returns void
      */
-    align(neighbors: Boid[], strength: number = 0.011): void {  
+    align(neighbors: Boid[], strength: number = 0.011): void {
         let steering = new THREE.Vector3(0, 0, 0)
-        
+
         if (neighbors.length === 0) {
             return
         }
-        
+
         for (const other of neighbors) {
             steering.add(other.velocity)
         }
@@ -85,10 +82,10 @@ export class Boid extends THREE.Mesh {
         steering.sub(this.velocity)
         steering.multiplyScalar(strength)
         steering.clampLength(0, this.maxForce)
-        
+
         this.acceleration.add(steering)
     }
-    
+
     /**
      * Move towards the center of the local flock
      * @param otherBoids An array of other boids that do not include this boid
@@ -96,17 +93,16 @@ export class Boid extends THREE.Mesh {
      * @returns void
      */
     cohese(neighbors: Boid[], strength: number = 0.002): void {
-
         if (neighbors.length === 0) {
             return
         }
         let avgPosition = new THREE.Vector3(0, 0, 0)
-        
+
         for (const other of neighbors) {
             avgPosition.add(other.position)
         }
         avgPosition.divideScalar(neighbors.length)
-        
+
         // steer towards the average position
         let steering = avgPosition.sub(this.position)
         steering.setLength(this.maxSpeed)
@@ -152,15 +148,17 @@ export class Boid extends THREE.Mesh {
      * @param otherBoids An array of boids
      * @param distance the maximum distance to be perceived by the boid
      * @param fov the angle of the boid's field of view, with respect to the pointing direction
-     * @returns 
+     * @returns
      */
     getNeighbors(otherBoids: Boid[], distance: number = 10, fov: number = Math.PI / 3) {
         return otherBoids.filter((other) => {
             const vectorToOther = other.position.clone().sub(this.position)
             const angleToOther = this.velocity.angleTo(vectorToOther)
-            return other !== this
-                && this.position.distanceTo(other.position) < distance
-                && angleToOther < fov
+            return (
+                other !== this &&
+                this.position.distanceTo(other.position) < distance &&
+                angleToOther < fov
+            )
         })
     }
 }
