@@ -21,7 +21,7 @@ const material = new THREE.MeshBasicMaterial({
 
 const cube = new THREE.Mesh(geometry, material)
 scene.add(cube)
-const flock = new Flock(80);
+const flock = new Flock(100);
 scene.add(flock);
 
 window.addEventListener('resize', onWindowResize, false)

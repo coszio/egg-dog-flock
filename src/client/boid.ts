@@ -3,7 +3,7 @@ import * as THREE from 'three'
 export class Boid extends THREE.Mesh {
     velocity = new THREE.Vector3(0, 0, 0)
     acceleration = new THREE.Vector3(0, 0, 0)
-    maxForce = 2
+    maxForce = 0.4
     maxSpeed = 0.5
     width = 80
     height = 50
@@ -24,11 +24,11 @@ export class Boid extends THREE.Mesh {
         this.acceleration.copy(this.acceleration)
     }
 
-    update(otherBoids: Boid[]) {
-        otherBoids = this.getNeighbors(otherBoids, 20)
-        this.separate(otherBoids, 0.001)
-        this.align(otherBoids, 0.003)
-        this.cohese(otherBoids, 0.002)
+    update(otherBoids: Boid[], strength = 0.006) {
+        otherBoids = this.getNeighbors(otherBoids, 15)
+        this.separate(otherBoids, .4 * strength)
+        this.align(otherBoids, 1.7 * strength)
+        this.cohese(otherBoids, 0.7 * strength)
         this.move()
         this.constrain(80, 50)
     }
@@ -52,11 +52,8 @@ export class Boid extends THREE.Mesh {
             diff.divideScalar(other.position.distanceTo(this.position))
             steering.add(diff)
         }
-        steering.divideScalar(neighbors.length)
-        steering.setLength(this.maxSpeed)
-        steering.sub(this.velocity)
+        // steering.divideScalar(neighbors.length)
         steering.multiplyScalar(strength)
-        steering.clampLength(0, this.maxForce)
 
         this.acceleration.add(steering)
     }
@@ -77,11 +74,9 @@ export class Boid extends THREE.Mesh {
         for (const other of neighbors) {
             steering.add(other.velocity)
         }
+        // Steer towards the average direction
         steering.divideScalar(neighbors.length)
-        steering.setLength(this.maxSpeed)
-        steering.sub(this.velocity)
         steering.multiplyScalar(strength)
-        steering.clampLength(0, this.maxForce)
 
         this.acceleration.add(steering)
     }
@@ -105,10 +100,7 @@ export class Boid extends THREE.Mesh {
 
         // steer towards the average position
         let steering = avgPosition.sub(this.position)
-        steering.setLength(this.maxSpeed)
-        steering.sub(this.velocity)
         steering.multiplyScalar(strength)
-        steering.clampLength(0, this.maxForce)
         this.acceleration.add(steering)
     }
 
@@ -150,7 +142,7 @@ export class Boid extends THREE.Mesh {
      * @param fov the angle of the boid's field of view, with respect to the pointing direction
      * @returns
      */
-    getNeighbors(otherBoids: Boid[], distance: number = 10, fov: number = Math.PI / 3) {
+    getNeighbors(otherBoids: Boid[], distance: number = 10, fov: number = Math.PI / 1.5) {
         return otherBoids.filter((other) => {
             const vectorToOther = other.position.clone().sub(this.position)
             const angleToOther = this.velocity.angleTo(vectorToOther)
