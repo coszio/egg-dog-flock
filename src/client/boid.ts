@@ -1,5 +1,6 @@
 import * as THREE from 'three'
 
+
 export class Boid extends THREE.Mesh {
     velocity = new THREE.Vector3(0, 0, 0)
     acceleration = new THREE.Vector3(0, 0, 0)
@@ -9,7 +10,7 @@ export class Boid extends THREE.Mesh {
     height = 50
 
     constructor() {
-        super(
+         super(
             new THREE.ConeGeometry(0.5, 2, 5).rotateX(-Math.PI / 2),
             new THREE.MeshBasicMaterial({
                 color: 'blue',

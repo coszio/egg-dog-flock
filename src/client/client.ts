@@ -1,6 +1,7 @@
 import * as THREE from 'three'
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls'
 import { Flock } from './flock'
+import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
 
 const scene = new THREE.Scene()
 
@@ -19,8 +20,22 @@ const material = new THREE.MeshBasicMaterial({
     wireframe: true,
 })
 
-const cube = new THREE.Mesh(geometry, material)
-scene.add(cube)
+const loader = new GLTFLoader();
+
+loader.load( 'models/EggDog.glb', function ( glb ) {
+    console.log(glb)
+
+    const root = glb.scene;
+    scene.add( root );
+
+}, undefined, function ( error ) {
+
+    console.error( error );
+
+} );
+
+//const cube = new THREE.Mesh(geometry, material)
+//scene.add(cube)
 const flock = new Flock(100);
 scene.add(flock);
 
@@ -36,8 +51,8 @@ function animate() {
     requestAnimationFrame(animate)
 
     flock.update();
-    cube.rotation.x += 0.01
-    cube.rotation.y += 0.01
+    //cube.rotation.x += 0.01
+    //cube.rotation.y += 0.01
 
     controls.update()
 
