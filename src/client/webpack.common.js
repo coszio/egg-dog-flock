@@ -21,7 +21,9 @@ module.exports = {
     output: {
         filename: 'bundle.js',
         path: path.resolve(__dirname, '../../dist'),
+        publicPath: 'auto',
     },
+
     plugins: [
     new HtmlWebpackPlugin({
         template: 'src/client/index.html'

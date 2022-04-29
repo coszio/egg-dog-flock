@@ -19,10 +19,9 @@ const material = new THREE.MeshBasicMaterial({
     color: 0x00ff00,
     wireframe: true,
 })
+/*const loader = new GLTFLoader();
 
-const loader = new GLTFLoader();
-
-loader.load( 'models/EggDog.glb', function ( glb ) {
+loader.load( 'EggDog.glb', function ( glb ) {
     console.log(glb)
 
     const root = glb.scene;
@@ -32,8 +31,21 @@ loader.load( 'models/EggDog.glb', function ( glb ) {
 
     console.error( error );
 
-} );
+} );*/
+//////////////  luz  //////////////////////
+scene.background = new THREE.Color( 0xa0a0a0 );
 
+const dirLight = new THREE.DirectionalLight( 0xffffff );
+dirLight.position.set( - 3, 10, - 10 );
+dirLight.castShadow = true;
+dirLight.shadow.camera.top = 2;
+dirLight.shadow.camera.bottom = - 2;
+dirLight.shadow.camera.left = - 2;
+dirLight.shadow.camera.right = 2;
+dirLight.shadow.camera.near = 0.1;
+dirLight.shadow.camera.far = 40;
+scene.add( dirLight );
+////////////////////////////////////
 //const cube = new THREE.Mesh(geometry, material)
 //scene.add(cube)
 const flock = new Flock(100);
