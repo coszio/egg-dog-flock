@@ -32,6 +32,13 @@ scene.add(dirLight);
 const flock = new Flock(40)
 scene.add(flock)
 
+//// placeholder ground /////
+const geometry = new THREE.PlaneGeometry( 180, 180 );
+const material = new THREE.MeshBasicMaterial( {color: 107142035, side: THREE.DoubleSide} );
+const plane = new THREE.Mesh( geometry, material );
+plane.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI / 2)
+scene.add( plane );
+
 window.addEventListener('resize', onWindowResize, false)
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight

@@ -113,6 +113,7 @@ export abstract class Boid extends THREE.Object3D {
         this.velocity.clampLength(0, this.maxSpeed)
         this.acceleration.clampLength(0, this.maxForce)
         this.lookAt(this.position.clone().sub(this.velocity))
+        this.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI)
     }
 
     /**

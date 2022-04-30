@@ -26,7 +26,5 @@ export class Eggdog extends Boid {
 
         // TODO: add animation
 
-        // TODO: set object orientation, so that eggdogs point to the direction where they are going
-
     }
 }
