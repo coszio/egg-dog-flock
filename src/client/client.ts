@@ -13,16 +13,31 @@ document.body.appendChild(renderer.domElement)
 
 const controls = new OrbitControls(camera, renderer.domElement)
 
-const geometry = new THREE.BoxGeometry()
-const material = new THREE.MeshBasicMaterial({
-    color: 0x00ff00,
-    wireframe: true,
-})
+const hemiLight = new THREE.HemisphereLight( 0xffffff, 0x444444 );
+hemiLight.position.set( 0, 20, 0 );
+scene.add(hemiLight);
 
-const cube = new THREE.Mesh(geometry, material)
-scene.add(cube)
-const flock = new Flock(100);
-scene.add(flock);
+const dirLight = new THREE.DirectionalLight( 0xffffff );
+dirLight.position.set( - 3, 10, - 10 );
+dirLight.castShadow = true;
+dirLight.shadow.camera.top = 2;
+dirLight.shadow.camera.bottom = - 2;
+dirLight.shadow.camera.left = - 2;
+dirLight.shadow.camera.right = 2;
+dirLight.shadow.camera.near = 0.1;
+dirLight.shadow.camera.far = 40;
+                
+scene.add(dirLight);
+                
+const flock = new Flock(40)
+scene.add(flock)
+
+//// placeholder ground /////
+const geometry = new THREE.PlaneGeometry( 180, 180 );
+const material = new THREE.MeshBasicMaterial( {color: 107142035, side: THREE.DoubleSide} );
+const plane = new THREE.Mesh( geometry, material );
+plane.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI / 2)
+scene.add( plane );
 
 window.addEventListener('resize', onWindowResize, false)
 function onWindowResize() {
@@ -35,9 +50,7 @@ function onWindowResize() {
 function animate() {
     requestAnimationFrame(animate)
 
-    flock.update();
-    cube.rotation.x += 0.01
-    cube.rotation.y += 0.01
+    flock.update()
 
     controls.update()
 

@@ -1,14 +1,14 @@
 import * as THREE from 'three'
-import { Boid } from './boid';
+import { Eggdog } from './eggdog';
 
 export class Flock extends THREE.Group {
-  boids: Boid[] = [];
+  boids: Eggdog[] = [];
 
 
   constructor(n: number) {
     super();
     for (let i = 0; i < n; i++) {
-      const boid = new Boid();
+      const boid = new Eggdog();
       this.boids.push(boid);
       this.add(boid);
     }

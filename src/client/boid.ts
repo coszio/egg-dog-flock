@@ -1,6 +1,6 @@
 import * as THREE from 'three'
 
-export class Boid extends THREE.Mesh {
+export abstract class Boid extends THREE.Object3D {
     velocity = new THREE.Vector3(0, 0, 0)
     acceleration = new THREE.Vector3(0, 0, 0)
     maxForce = 0.4
@@ -9,24 +9,23 @@ export class Boid extends THREE.Mesh {
     height = 50
 
     constructor() {
-        super(
-            new THREE.ConeGeometry(0.5, 2, 5).rotateX(-Math.PI / 2),
-            new THREE.MeshBasicMaterial({
-                color: 'blue',
-            })
-        )
+        super()
         this.position.set(
             (Math.random() - 0.5) * this.width,
+            0,
             (Math.random() - 0.5) * this.height,
-            0
         )
-        this.velocity.set((Math.random() - 0.5) * 0.1, (Math.random() - 0.5) * 0.1, 0)
+        this.velocity.set(
+            (Math.random() - 0.5) * 0.1,
+            0,
+            (Math.random() - 0.5) * 0.1,
+        )
         this.acceleration.copy(this.acceleration)
     }
 
     update(otherBoids: Boid[], strength = 0.006) {
         otherBoids = this.getNeighbors(otherBoids, 15)
-        this.separate(otherBoids, .4 * strength)
+        this.separate(otherBoids, 0.4 * strength)
         this.align(otherBoids, 1.7 * strength)
         this.cohese(otherBoids, 0.7 * strength)
         this.move()
@@ -114,13 +113,14 @@ export class Boid extends THREE.Mesh {
         this.velocity.clampLength(0, this.maxSpeed)
         this.acceleration.clampLength(0, this.maxForce)
         this.lookAt(this.position.clone().sub(this.velocity))
+        this.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI)
     }
 
     /**
      * Constrains the boid to the bounds of the scene
      * @returns void
      */
-    constrain(width: number = 100, height: number = 50) {
+    constrain(width: number = 100, height: number = 50, depth: number = 50) {
         if (this.position.x > width) {
             this.position.x = -width
         }
@@ -132,6 +132,12 @@ export class Boid extends THREE.Mesh {
         }
         if (this.position.y < -height) {
             this.position.y = height
+        }
+        if (this.position.z > depth) {
+            this.position.z = -depth
+        }
+        if (this.position.z < -depth) {
+            this.position.z = depth
         }
     }
 
