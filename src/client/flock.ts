@@ -9,6 +9,7 @@ export class Flock extends THREE.Group {
     super();
     for (let i = 0; i < n; i++) {
       const boid = new Eggdog();
+      boid.animations
       this.boids.push(boid);
       this.add(boid);
     }
