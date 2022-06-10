@@ -3,6 +3,7 @@ import { Boid } from './boid';
 
 const loader = new GLTFLoader();
 
+
 function onError(error: any) {
     console.error(error)
 }
@@ -23,8 +24,5 @@ export class Eggdog extends Boid {
             undefined,
             onError
         );
-
-        // TODO: add animation
-
     }
 }
