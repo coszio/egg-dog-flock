@@ -1,15 +1,15 @@
-import * as THREE from 'three'
+import { AnimationAction, Group } from 'three'
 import { Eggdog } from './eggdog';
 
-export class Flock extends THREE.Group {
+export class Flock extends Group {
   boids: Eggdog[] = [];
+  animationActions: AnimationAction[] = [];
 
 
   constructor(n: number) {
     super();
     for (let i = 0; i < n; i++) {
       const boid = new Eggdog();
-      boid.animations
       this.boids.push(boid);
       this.add(boid);
     }
@@ -17,4 +17,13 @@ export class Flock extends THREE.Group {
   update() {
     this.boids.forEach((boid) => boid.update(this.boids));
   }
+  animate(delta: number) {
+    this.boids.forEach((boid) => {
+      boid.animate(delta);
+    });
+  }
 }
+
+const flock = new Flock(10);
+
+flock.update()

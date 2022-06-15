@@ -1,19 +1,18 @@
-import * as THREE from 'three'
+import { Vector3, Object3D } from 'three';
 
-export abstract class Boid extends THREE.Object3D {
-    velocity = new THREE.Vector3(0, 0, 0)
-    acceleration = new THREE.Vector3(0, 0, 0)
+export abstract class Boid extends Object3D {
+    velocity = new Vector3(0, 0, 0)
+    acceleration = new Vector3(0, 0, 0)
     maxForce = 0.4
     maxSpeed = 0.5
-    width = 80
-    height = 50
+    radius = 60
 
     constructor() {
         super()
         this.position.set(
-            (Math.random() - 0.5) * this.width,
+            (Math.random() - 0.5) * this.radius,
             0,
-            (Math.random() - 0.5) * this.height,
+            (Math.random() - 0.5) * this.radius,
         )
         this.velocity.set(
             (Math.random() - 0.5) * 0.1,
@@ -25,11 +24,11 @@ export abstract class Boid extends THREE.Object3D {
 
     update(otherBoids: Boid[], strength = 0.006) {
         otherBoids = this.getNeighbors(otherBoids, 15)
-        this.separate(otherBoids, 0.4 * strength)
+        this.separate(otherBoids, 0.5 * strength)
         this.align(otherBoids, 1.7 * strength)
         this.cohese(otherBoids, 0.7 * strength)
         this.move()
-        this.constrain(80, 50)
+        this.constrain()
     }
 
     /**
@@ -44,7 +43,7 @@ export abstract class Boid extends THREE.Object3D {
             return
         }
         // get the sum of distances to the other boids
-        let steering = new THREE.Vector3(0, 0, 0)
+        let steering = new Vector3(0, 0, 0)
         for (const other of neighbors) {
             let diff = this.position.clone().sub(other.position)
             // inversely proportional to the distance
@@ -64,7 +63,7 @@ export abstract class Boid extends THREE.Object3D {
      * @returns void
      */
     align(neighbors: Boid[], strength: number = 0.011): void {
-        let steering = new THREE.Vector3(0, 0, 0)
+        let steering = new Vector3(0, 0, 0)
 
         if (neighbors.length === 0) {
             return
@@ -90,7 +89,7 @@ export abstract class Boid extends THREE.Object3D {
         if (neighbors.length === 0) {
             return
         }
-        let avgPosition = new THREE.Vector3(0, 0, 0)
+        let avgPosition = new Vector3(0, 0, 0)
 
         for (const other of neighbors) {
             avgPosition.add(other.position)
@@ -112,32 +111,18 @@ export abstract class Boid extends THREE.Object3D {
         this.velocity.add(this.acceleration)
         this.velocity.clampLength(0, this.maxSpeed)
         this.acceleration.clampLength(0, this.maxForce)
-        this.lookAt(this.position.clone().sub(this.velocity))
-        this.rotateOnAxis(new THREE.Vector3(0,1,0), Math.PI)
+        this.lookAt(this.position.clone().sub(this.acceleration))
+        this.rotateOnAxis(new Vector3(0,1,0), Math.PI)
     }
 
     /**
      * Constrains the boid to the bounds of the scene
      * @returns void
      */
-    constrain(width: number = 100, height: number = 50, depth: number = 50) {
-        if (this.position.x > width) {
-            this.position.x = -width
-        }
-        if (this.position.x < -width) {
-            this.position.x = width
-        }
-        if (this.position.y > height) {
-            this.position.y = -height
-        }
-        if (this.position.y < -height) {
-            this.position.y = height
-        }
-        if (this.position.z > depth) {
-            this.position.z = -depth
-        }
-        if (this.position.z < -depth) {
-            this.position.z = depth
+    constrain(height: number = 50) {
+        let distToCenter = this.position.distanceTo(new Vector3(0, 0, 0))
+        if (distToCenter > this.radius) {
+            this.position.multiplyScalar(-0.99);
         }
     }
 

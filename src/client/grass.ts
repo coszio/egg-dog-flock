@@ -1,5 +1,6 @@
-import * as THREE from 'three'
+import { Mesh, Object3D } from 'three'
 import { GLTF, GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import { SimplifyModifier } from 'three/examples/jsm/modifiers/SimplifyModifier'
 
 const loader = new GLTFLoader();
 
@@ -8,7 +9,7 @@ function onError(error: any) {
     console.error(error)
 }
 
-export class Grass extends THREE.Object3D {
+export class Grass extends Object3D {
         constructor() {
             super()
             console.log("grass constructor");
@@ -16,9 +17,8 @@ export class Grass extends THREE.Object3D {
             loader.load(
                 'grass.glb',
                 (gltf: GLTF) => {
-                    this.add(gltf.scene);
-                    this.animations = gltf.animations;
-                    console.log(gltf);
+                    const grass = gltf.scene.children[0]
+                    this.add(grass);
                 },
                 undefined,
                 onError

@@ -20,6 +20,7 @@ loader.load('skybox.jpg', (texture) => {
 
 const camera = new THREE.PerspectiveCamera(50, window.innerWidth / window.innerHeight, 1, 1000)
 camera.position.z = 100
+camera.position.y = 50
 
 const renderer = new THREE.WebGLRenderer()
 renderer.setSize(window.innerWidth, window.innerHeight)
@@ -43,22 +44,15 @@ dirLight.shadow.camera.far = 40;
                 
 scene.add(dirLight);
                 
-const flock = new Flock(40)
+const flock = new Flock(30)
 scene.add(flock)
 
 const grass = new Grass()
-grass.scale.multiplyScalar(70)
+grass.scale.multiplyScalar(50)
 grass.position.add(new THREE.Vector3(0,-10,0))
 scene.add(grass)
 
-//// placeholder ground /////
-/*
-const geometry = new THREE.PlaneGeometry( 180, 180 );
-const material = new THREE.MeshBasicMaterial( {color: 107142035, side: THREE.DoubleSide} );
-const plane = new THREE.Mesh( geometry, material );
-plane.rotateOnAxis(new THREE.Vector3(1,0,0), Math.PI / 2)
-scene.add( plane );
-*/
+
 window.addEventListener('resize', onWindowResize, false)
 function onWindowResize() {
     camera.aspect = window.innerWidth / window.innerHeight
@@ -67,30 +61,28 @@ function onWindowResize() {
     render()
 }
 
+var angle = 0;
+var radius = camera.position.z;
+var clock = new THREE.Clock();
+
+function rotateCamera() {
+    // camera.position.z = radius * Math.cos(angle);
+    camera.position.x = radius * Math.sin(angle);
+    angle += 0.01;
+}
 function animate() {
     requestAnimationFrame(animate)
 
-    flock.update()
+    flock.update();
+    flock.animate(clock.getDelta())
 
     controls.update()
 
+    rotateCamera()
     render()
 }
 
 function render() {
-    var timer = Date.now() * 0.0001
-
-    scene.traverse( function (flock ) {
-        if (!grass){
-            flock.rotation.y = timer * 100;
-        }
-
-        if (grass){
-           flock.rotation.y = timer * 0.5;
-        }
-
-    });
-
     renderer.render(scene, camera)
 }
 animate()
